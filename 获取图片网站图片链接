@@ -1,0 +1,68 @@
+import requests
+import re
+import os
+import _thread
+
+
+class Tp_requests(object):
+
+    os_path = os.getcwd() + '/图片/'
+    if not os.path.exists(os_path):
+        os.mkdir(os_path)
+
+    def __init__(self):
+        """准备数据"""
+        self.user_page = int(input('请键入请求页面页数:'))
+        self.user_input = int(input('键入请求网址数量:'))
+        for i in range(self.user_page):
+            self.start_url = f'https://www.tooopen.com/img/88_879_1_{self.user_page}.aspx'
+        self.headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.24 '
+        }
+        self.headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.24 '
+        }
+
+    def get_response(self):
+        """
+        发送请求获取响应数据
+        :return:
+        """
+        response = requests.get(self.start_url, headers=self.headers).text
+        # print(response)
+        self.analysis_data(response)
+
+    def analysis_data(self, response):
+        """
+        解析响应数据
+        :param response: 响应网页源代码
+        :return:
+        """
+        px = '.*?<a class="pic" href="(.*?)" title=.*?'
+        id_jpg = re.findall(px, response, re.S)
+        self.storage_data(id_jpg)
+
+    def storage_data(self, id_jpg):
+        """
+        储存网址
+        :param id_jpg: 网页列表
+        :return:
+        """
+        for i in range(self.user_input):
+            print(id_jpg[i])
+
+
+if __name__ == '__main__':
+    t = Tp_requests()
+    n = t.get_response()
+
+
+
+# soup = BeautifulSoup(response, 'lxml')
+# ex = soup.select('column')
+# ex = '<body>.*?<span class="top-lines"></span>.*?<a href="http://www.viwik.com" target="_blank" class="color">免费设计素材网</a>(.*?)<div style="display:none" id="data-more">'
+# img_src = re.findall(ex, response, re.S)
+# with open(self.os_path + 'i', 'jpg') as j:
+# j.write(id_jpg)
