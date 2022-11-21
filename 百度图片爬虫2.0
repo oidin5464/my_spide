@@ -1,0 +1,80 @@
+import os
+import requests
+
+
+class BS_spider(object):
+    os_path = os.getcwd() + '/图片/'
+    if not os.path.exists(os_path):
+        os.mkdir(os_path)
+
+    def __init__(self):
+        """准备数据"""
+        self.user_input = int(input('请输入请求页数:'))
+        self.url = "https://image.baidu.com/search/albumsdata"
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52'
+        }
+
+    # 'pn': f'{30 * i}',
+    # 'rn': '30',
+    # 'tn': 'albumsdetail',
+    # 'word': '人物',
+    # 'album_tab': '人物',
+    # 'album_id': '45',
+    # 'ic': '0',
+    # 'curPageNum': f'{i}'
+    def get_request(self):
+        """发送请求，获取响应数据"""
+        for i in range(1, self.user_input):
+            params = {
+                'pn': 'f{30 * i}',
+                'rn': '30',
+                'tn': 'albumsdetail',
+                'word': '渐变风格插画',
+                'album_tab': '设计素材',
+                'album_id': '409',
+                'ic': '0',
+                'curPageNum': 'f{i}'
+            }
+            response = requests.get(self.url, headers=self.headers, params=params).json()
+            self.analysis_data(response)
+
+    def analysis_data(self, response):
+        """解析数据"""
+        data_list = response['albumdata']['linkData']
+        for dict_data in data_list:
+            img_name = dict_data['contSign']
+            img_url = dict_data['thumbnailUrl']
+            data = requests.get(img_url).content
+            self.storage_data(img_name, data)
+
+    def storage_data(self, img_name, data):
+        """储存数据"""
+        with open(self.os_path + img_name + 'jpg', 'wb') as tp:
+            tp.write(data)
+            print('--------导入完成---------')
+
+
+if __name__ == '__main__':
+    t = BS_spider()
+    t.get_request()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
