@@ -1,0 +1,47 @@
+import requests
+
+from urllib.parse import quote
+
+
+class My_url(object):
+    def __init__(self):
+        """爬虫原理第一步：准备爬虫起始地址(将要发送请求的地址)"""
+        self.user_input = input('输入关键词：')
+        self.user_page = input('输入将要获取的页数：')
+        self.start_url = 'https://tieba.baidu.com/f?kw={}&ie=utf-8&pn={}'
+        self.headers = {
+            'User-Agent': 'Mozilla / 5.0(Linux;Android6.0;Nexus5Build / MRA58N) AppleWebKit / 537.36(KHTML, likeGecko) '
+                          'Chrome / 106.0.0.0MobileSafari / 537.36Edg / 106.0.1370.52 '
+        }
+
+    def get_request(self):
+        title = quote(self.user_input)
+        # 解决用户输入的翻页
+        for page in range(int(self.user_page)):
+            # 拼接地址
+            start_url = self.start_url.format(title, page * 50)
+            response = requests.get(url=start_url, headers=self.headers)
+            self.jie_xi_request(response, page)
+
+    def jie_xi_request(self, response, page):
+        """
+        爬虫原理第三步：解析响应，数据提取
+        :return:
+        """
+        data = response.content.decode()
+        self.chu_cun_request(data, page)
+
+    def chu_cun_request(self, data, page):
+        """
+        爬虫原理第四步：存储数据
+        :return:
+        """
+        #         with open(f"{self.user_input},{self.page}")
+        with open(f"{self.user_input}{page + 1}.html", 'w', encoding='utf8') as f:
+            f.write(data)
+        print(f'{self.user_input}=====第{page + 1}页====采集完成====logging!!!')
+
+
+if __name__ == '__main__':
+    t = My_url()
+    t.get_request()
