@@ -1,0 +1,40 @@
+import requests,os
+# "https://image.baidu.com/search/albumsdata?pn=60&rn=30&tn=albumsdetail&word=%E4%BA%BA%E7%89%A9&album_tab=%E4%BA%BA%E7%89%A9&album_id=45&ic=0&curPageNum=2"
+os_path = os.getcwd() + '/图片/'
+if not os.path.exists(os_path):
+    os.mkdir(os_path)
+
+
+url = "https://image.baidu.com/search/albumsdata"
+for i in range(1, 4):
+    params = {
+        'pn': f'{30*i}',
+        'rn': '30',
+        'tn': 'albumsdetail',
+        'word': '人物',
+        'album_tab': '人物',
+        'album_id': '45',
+        'ic': '0',
+        'curPageNum': f'{i}'
+        }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52'
+    }
+    response = requests.get(url, headers=headers, params=params).json()
+    data_list = response['albumdata']['linkData']
+    for dict_data in data_list:
+        img_name = dict_data['contSign']
+        img_url = dict_data['thumbnailUrl']
+        data = requests.get(img_url).content
+        with open(os_path + img_name + 'jpg', 'wb')as t:
+            t.write(data)
+            print('--------导入完成---------')
+
+
+
+
+
+
+
+
+
