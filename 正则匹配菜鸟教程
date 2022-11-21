@@ -1,0 +1,63 @@
+import requests
+import os
+import re
+from bs4 import BeautifulSoup
+
+
+url = 'https://www.runoob.com/python3/python3-multithreading.html'
+
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26'
+}
+
+response = requests.get(url, headers).content.decode()
+# print(response)
+# soup = BeautifulSoup(response, 'lxml')
+# text = soup.select('example_code > <span>')[0].text
+# print(text)
+
+
+# text_soup = '<div class="example">(.*?)</div>'
+# img = re.findall(text_soup, response, re.S)
+jix = re.findall('[\u4e00-\u9fa5]', response)
+for q in jix:
+    print(q, end='')
+ji = '<div class="article-intro" id="content">(.*?)</div>'
+mi = re.findall(ji, response, re.S)
+for i in mi:
+    # print(i)
+    # jx = '<p>(.*?)</p>'
+    xm = re.findall('[\u4e00-\u9fa5]', i)
+    print(xm)
+    # for m in xm:
+    #     print(m)
+    # for n in jx:
+    #     print(n)
+# print(mi)
+
+# for i in img:
+#     dai_ma = '<span style="color:.*?">(.*?)</span>'
+#     idg = re.findall(dai_ma, i)
+#     for j in idg:
+#         # print(type(j))
+#         if j == '&#40;':
+#             q = j.replace('&#40;', '(')
+#             print(q)
+#         elif j == '&#41;':
+#             q = j.replace('&#41;', ')')
+#         else:
+#             print(j)
+
+
+# <p></p>
+
+# n = '<p>每个独立的线程有一个程序运行的入口、顺序执行序列和程序的出口。但是线程不能够独立执行，必须依存在应用程序中，由应用程序提供多个线程执行控制。</p>'
+# ex = '<p>(*.?)</p>'
+# ex = re.findall(ex, n, re.S)
+# print(ex)
+
+# <span style="color: Green;font-weight:bold;">import</span>
+# <span style="color: #a50">#!/usr/bin/python3</span>
+
+
+
