@@ -1,0 +1,60 @@
+import requests
+from bs4 import BeautifulSoup
+import os
+
+
+# 创建储存路径
+os_path = os.getcwd() +'/图片/'
+if not os.path.exists(os_path):
+    os.mkdir(os_path)
+url = "https://www.ggac.com/api/v2/work"
+# ?work_tag_id=1814&right_conditions=hot
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26'
+}
+
+# user_input = int(input('请求页数：'))
+# 请求参数
+params = {
+    'right_conditions': 'hot',
+    'current_page': '1',
+    'page_size': '42',
+    'tag_subtype': '赛博朋克'
+}
+# 发送请求，获取网页源代码
+# , proxies={'http': '61.216.156.222'}
+response = requests.post(url, headers=headers, params=params).json()
+# 将网页对象实例化
+print(response)
+# soup = BeautifulSoup(response, 'lxml')
+#
+# # 遍历
+# for i in range(user_input):
+#     # 调用bs4库，获取第i个a标签中href属性，即图片对应的网页链接
+#     first_soup = soup.select("app > el_container work_wall > a")[i]['href']
+#     # 构建完整的链接网址
+#     joint_url = 'https://www.ggac.com' + first_soup
+#     # 对链接下的网址发送请求，获取对应的json数据
+#     my_response = requests.post(joint_url, headers=headers).json()
+#     # 解析json数据获取json字典中包含图片信息的字典
+#     data_list = my_response['data']['work_images']
+#     # 遍历此字典的键值对
+#     for dict_data in data_list:
+#         # 定义保存图片的文件名称，防止图片覆盖
+#         img_name = dict_data[id]
+#         # 获取图片地址
+#         img_url = dict_data['url']
+#         # 向图片地址发送请求，获取响应的二进制数据
+#         data = requests.get(url, headers=headers).content
+#         # 将图片保存
+#         with open(os_path + '图片2' + 'jpg', 'wb') as f:
+#             f.write(data)
+
+
+
+
+
+
+
+
+
