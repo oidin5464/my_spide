@@ -1,0 +1,82 @@
+import requests
+from bs4 import BeautifulSoup
+import os
+
+
+class GG_request(object):
+    os_path = os.getcwd() + '/图片/'
+    if not os.path.exists(os_path):
+        os.mkdir(os_path)
+
+    def __init__(self):
+        self.url = "https://www.ggac.com/v2/home"
+        self.user_input = int(input('请求页数:'))
+        self.params = {
+            'work_tag_id': '1814',
+            'right_conditions': 'hot'
+        }
+        self.headers = {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Cookie': 'ggsessionid=4lc8bxddjalep794lffb4qupc3qspnxr; _ga=GA1.2.130425192.1667044462; '
+                      '_gid=GA1.2.923404732.1667044462; Hm_lvt_cc44fbcb56dd7ddacad491db71848194=1667044462,'
+                      '1667106732; acw_tc=707c9fd616671292118061622e17e94e0ad014bef4a9d1d6430f54abc6c2a2; '
+                      'Hm_lpvt_cc44fbcb56dd7ddacad491db71848194=1667129587',
+            'Host': 'www.ggac.com',
+            'isLoad': 'false',
+            'Origin': 'https://www.ggac.com',
+            'Referer': 'https://www.ggac.com/v2/home?work_tag_id=1814&right_conditions=hot',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26'
+        }
+
+    def get_response(self):
+        """
+        发送请求，获取响应数据
+        :return:
+        """
+        response = requests.post(self.url, headers=self.headers, params=self.params, proxies={'http': '61.216.156.222'}).text
+        soup = BeautifulSoup(response, 'lxml')
+        for i in range(self.user_input):
+            # 调用bs4库，获取第i个a标签中href属性，即图片对应的网页链接
+            first_soup = soup.select("app > el_container work_wall > a")[i]['href']
+            # 构建完整的链接网址
+            joint_url = 'https://www.ggac.com' + first_soup
+            # 对链接下的网址发送请求，获取对应的json数据
+            my_response = requests.post(joint_url, headers=self.headers).json()
+            self.analysis_data(my_response)
+
+    def analysis_data(self, my_response):
+        """
+        解析数据
+        :param my_response: 一级响应
+        :return:
+        """
+        # 解析json数据获取json字典中包含图片信息的字典
+        data_list = my_response['data']['work_images']
+        # 遍历此字典的键值对
+        for dict_data in data_list:
+            # 定义保存图片的文件名称，防止图片覆盖
+            img_name = dict_data[id]
+            # 获取图片地址
+            img_url = dict_data['url']
+            # 二级响应，向图片地址发送请求，获取响应的二进制数据
+            data = requests.get(img_url, headers=self.headers).content
+            self.storage_data(img_name, data)
+
+    def storage_data(self, img_name, data):
+        """
+        储存数据
+        :param img_name: 储存路径名
+        :param data: 图片二进制数据
+        :return:
+        """
+        with open(self.os_path + img_name + 'jpg', 'wb') as f:
+            f.write(data)
+
+
+if __name__ == '__main__':
+    t = GG_request()
+    t.get_response()
+
+
+
+
