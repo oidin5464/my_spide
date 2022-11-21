@@ -1,0 +1,68 @@
+import requests
+import tkinter
+
+
+class Translate(object):
+
+    def __init__(self):
+        self.UI = tkinter.Tk()  # 创建一个窗口
+        self.url = 'https://fanyi.baidu.com/sug'
+
+    def bd_ui(self):
+        """
+        窗口函数
+        :return:p
+        """
+        self.UI.title('百度翻译')  # 窗口标题
+        self.UI.geometry("500x500+700+300")  # 窗口设置
+
+        # 提示标签
+        txt0 = tkinter.Label(self.UI, text='请输入词语或句子：', font=('宋体', 12))
+        txt0.place(x=0, y=10)
+
+        # 文本输入框
+        input_txt = tkinter.Entry(self.UI, font=('宋体', 15), width=30)
+        input_txt.place(x=170, y=10)
+
+        # 提示标签
+        txt1 = tkinter.Label(self.UI, text='翻译结果：', font=('宋体', 12))
+        txt1.place(x=10, y=150)
+
+        # 结果输出框
+        output_text = tkinter.Text(self.UI, width=30, height=5, font=('宋体', 15))
+        output_text.place(x=170, y=150)
+        self.requsets(input_txt, output_text)
+
+    def requsets(self, input_txt, output_text):
+        """
+        请求实现模块
+        :param input_txt: 文本输入框输入的内容
+        :param output_text: 结果输出框输出的内容；导入旨在用于清除上次输出的文本内容
+        :return:
+        """
+
+        def beg():
+            en = input_txt.get()  # 获取文本框输入的文字
+            data = {
+                'kw': en
+            }
+            response = requests.post(url=self.url, data=data).json()
+
+            # 取出返回的字典中包含翻译内容的键对值[0],并取出值
+            data = response['data'][0]['v']
+            # 清空文本框中的内容
+            output_text.delete(1.0, 'end')
+            # 将请求提取到的数据输入
+            output_text.insert("end", data)
+            str(input_txt.get())
+
+        # 创建按钮，触发请求
+        Button = tkinter.Button(self.UI, text="翻译", font=("宋体", 20), command=beg)
+        Button.place(x=200, y=350)
+
+        self.UI.mainloop()  # 输出窗口视窗
+
+
+if __name__ == '__main__':
+    t = Translate()
+    t.bd_ui()
